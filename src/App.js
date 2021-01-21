@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import Logs from './components/Logs';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+
+  state = {
+    logs: []
+  }
+
+  componentDidMount() {
+    fetch('http://localhost:8000/')
+    .then(res => res.json())
+    .then(data => {
+      this.setState({ logs: data});
+    })
+    .catch(console.log);
+  }
+
+  render() {
+    return (
+      <Logs logs={this.state.logs}/>
+    )
+  }
 }
 
 export default App;
