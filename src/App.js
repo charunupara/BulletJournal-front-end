@@ -2,14 +2,18 @@ import React from 'react';
 import Logs from './components/Logs';
 
 
+
 class App extends React.Component {
 
-  state = {
-    logs: []
+  constructor(props) {
+    super(props);
+    this.state = {
+      logs: []
+    }
   }
 
   componentDidMount() {
-    fetch('http://localhost:8000/')
+    fetch('http://localhost:8000/logs')
     .then(res => res.json())
     .then(data => {
       this.setState({ logs: data});

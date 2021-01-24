@@ -1,19 +1,33 @@
-import React from 'react';
+import React from "react";
+import Task from "./Task";
+import Note from "./Note";
+import Event from "./Event";
 
-const Logs = ({ logs }) => {
+
+// Determine which type of log will be rendered
+const checkType = (log) => {
+  if (log.category === "task") {
+    return <Task log={log} />
+  } else if (log.category === "note") {
+    return <Note log={log} />
+  } else {
+    return <Event log={log} />
+  }
+}
+
+
+class Logs extends React.Component {
+
+  render() {
     return (
-        <div>
-          <h1>Today's Log</h1>
-          {logs.map((log) => (
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">{log.title}</h5>
-                <h6 className="card-subtitle mb2 text-muted">{log.category}</h6>
-              </div>
-            </div>
-          ))}
-        </div>
-    )
-};
+      <div>
+        <h1>Today's Log</h1>
+        {this.props.logs.map((log) => (
+          checkType(log)
+        ))}
+      </div>
+    );
+  }
+}
 
 export default Logs;
