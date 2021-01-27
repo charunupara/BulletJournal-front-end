@@ -1,9 +1,10 @@
 import React from "react";
+import Button from 'react-bootstrap/Button';
 
 // Determine which type of log will be rendered
 const checkTypeAndRender = (log) => {
   if (log.category === "task") {
-    return <div>* {log.title}</div>;
+    return <div>• {log.title}</div>;
   } else if (log.category === "note") {
     return <div>- {log.title}</div>;
   } else {
@@ -26,11 +27,10 @@ class Log extends React.Component {
     return (
       <div>
         {checkTypeAndRender(this.props.log)}
-        {console.log(this.props.index)}
         {this.props.log.isRelevant ? (
-          <button onClick={this.handleChange}>Mark as irrelevant</button>
+          <Button onClick={this.handleChange}>Mark as irrelevant</Button>
         ) : (
-          <button onClick={this.handleChange}>Mark as relevant</button>
+          <Button onClick={this.handleChange}>Mark as relevant</Button>
         )}
       </div>
     );

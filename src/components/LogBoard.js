@@ -13,30 +13,53 @@ class LogBoard extends React.Component {
       logs: [],
     };
     this.handleIrrevant = this.handleIrrevant.bind(this);
-  }
-
-  // Important to understand! States should be treated as immutable, so what we
-  // do here is create a copy of the state, make changes where we want to, and set the state to be the modified copy
-  handleIrrevant(index) {
-    let newLog = JSON.parse(JSON.stringify(this.state.logs));
-
-    if (newLog[index].isRelevant === true) {
-      newLog[index].isRelevant = false;
-    } else {
-      newLog[index].isRelevant = true;
-    }
-
-    this.setState({ logs: newLog });
+    this.getData = this.getData.bind(this);
   }
 
   // Talks to backend and fetches data after initial mount
   componentDidMount() {
-    fetch("http://localhost:8000/logs")
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({ logs: data });
-      })
-      .catch(console.log);
+    this.getData();
+  }
+
+  // fetches data from database using my API
+  getData = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/logs");
+      const data = await res.json();
+      this.setState({ logs:  data});
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  // update state after PATCH request has been processed to ensure that this.state.logs is synchronised with database
+  // we don't update state directly, we update database then update state by fetching data
+  handleIrrevant(index) {
+    const curRelevant = this.state.logs[index].isRelevant;
+    const id = this.state.logs[index]._id;
+
+    let requestBody = {};
+
+    curRelevant
+      ? (requestBody.isRelevant = false)
+      : (requestBody.isRelevant = true);
+
+    const updateRelevant = async () => {
+      try {
+        const updatedLog = await fetch("http://localhost:8000/logs/" + id, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestBody),
+        });
+        const newLog = await updatedLog.json();
+        console.log(newLog);
+        this.getData();
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    updateRelevant();
   }
 
   render() {

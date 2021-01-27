@@ -1,6 +1,7 @@
 import React from 'react';
 import LogBoard from './components/LogBoard';
 import DateComponent from './components/DateComponent';
+import './stylesheets/app.css';
 
 
 
