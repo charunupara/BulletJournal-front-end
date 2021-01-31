@@ -30,6 +30,7 @@ class LogBoard extends React.Component {
     this.getData = this.getData.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
   }
 
   // Talks to backend and fetches data after initial mount
@@ -50,7 +51,6 @@ class LogBoard extends React.Component {
 
   // update state after PATCH request has been processed to ensure that this.state.logs is synchronised with database
   // we don't update state directly, we update database then update state by fetching data
-  // TODO FIX
   handleIrrevant(index) {
     const curRelevant = this.state.logs[index].isRelevant;
     const id = this.state.logs[index]._id;
@@ -118,6 +118,30 @@ class LogBoard extends React.Component {
     deleteLog();
   }
 
+  handleEdit(index, body) {
+    //SEND A PATCH REQUEST
+    const curLog = this.state.logs[index];
+    const id = curLog._id;
+    console.log(body, id);
+    
+    const editLog = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/logs/" + id, {
+          method: "PATCH",
+          headers: {"Content-Type": "application/json"},
+          body
+        })
+        const data = await res.json()
+        console.log(data)
+        this.getData()
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    editLog();
+  }
+
   render() {
     return (
       <div>
@@ -129,6 +153,7 @@ class LogBoard extends React.Component {
             key={log._id}
             onRelevantChange={this.handleIrrevant}
             onDelete={this.handleDelete}
+            onEdit={this.handleEdit}
           />
         ))}
 

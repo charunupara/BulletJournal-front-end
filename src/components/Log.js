@@ -1,27 +1,34 @@
 import React from "react";
-import CancelIcon from "@material-ui/icons/Cancel";
-import RestoreIcon from "@material-ui/icons/Restore";
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from '@material-ui/icons/Edit';
 import '../stylesheets/log.css';
+import LogModal from './LogModal';
+import {getSelectedCategory} from "../util/utils";
 
-// Determine which type of log will be rendered
-// const checkTypeAndRender = (log) => {
-//   if (log.category === "task") {
-//     return <span>• {log.title} </span>;
-//   } else if (log.category === "note") {
-//     return <span>- {log.title} </span>;
-//   } else if (log.category === "event") {
-//     return <span>◦ {log.title} </span>;
-//   } 
-// };
 
 
 class Log extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      modalOpen: false
+    }
     this.handleChange = this.handleChange.bind(this);
     this.checkTypeAndRender = this.checkTypeAndRender.bind(this);
     this.handleDeleteLog = this.handleDeleteLog.bind(this);
+    this.handleEditLog = this.handleEditLog.bind(this);
+    this.handleModalOpen = this.handleModalOpen.bind(this);
+    this.handleModalClose = this.handleModalClose.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+ 
+  }
+
+  handleModalOpen() {
+    this.setState({modalOpen: true})
+  }
+
+  handleModalClose() {
+    this.setState({modalOpen: false})
   }
 
   handleChange() {
@@ -30,7 +37,21 @@ class Log extends React.Component {
   }
 
   handleDeleteLog() {
-    this.props.onDelete(this.props.log)
+    this.props.onDelete(this.props.log);
+  }
+
+  handleEditLog() {
+    this.handleModalOpen()
+  }
+
+  handleSubmit() {
+    let {title, category} = getSelectedCategory()
+  
+    const body = JSON.stringify({title, category});
+
+    this.props.onEdit(this.props.index, body);
+
+    this.handleModalClose();
   }
 
   checkTypeAndRender = (log) => {
@@ -39,6 +60,7 @@ class Log extends React.Component {
         <div>
         <span onClick={this.handleChange}> • {log.title}  </span>
         <DeleteForeverIcon onClick={this.handleDeleteLog}></DeleteForeverIcon>
+        <EditIcon onClick={this.handleEditLog}></EditIcon>
         </div>
       );
     } else if (log.category === "note") {
@@ -46,6 +68,7 @@ class Log extends React.Component {
         <div>
         <span onClick={this.handleChange}> - {log.title}  </span>
         <DeleteForeverIcon onClick={this.handleDeleteLog}></DeleteForeverIcon>
+        <EditIcon onClick={this.handleEditLog}></EditIcon>
         </div>
       );
     } else if (log.category === "event") {
@@ -53,6 +76,7 @@ class Log extends React.Component {
         <div>
         <span onClick={this.handleChange}> ◦ {log.title}  </span>
         <DeleteForeverIcon onClick={this.handleDeleteLog}></DeleteForeverIcon>
+        <EditIcon onClick={this.handleEditLog}></EditIcon>
         </div>
       );
     }
@@ -74,6 +98,8 @@ class Log extends React.Component {
 
           </div>
         )}
+        {this.state.modalOpen ? <LogModal title="Edit Log" onSubmit={this.handleSubmit} onOpen={this.handleModalOpen} onClose={this.handleModalClose} logTitle={this.props.log.title} logCategory={this.props.log.category}/> : <div></div>}
+        
       </div>
     );
   }
