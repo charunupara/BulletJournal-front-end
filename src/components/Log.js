@@ -1,21 +1,27 @@
 import React from "react";
-import Button from 'react-bootstrap/Button';
+import CancelIcon from "@material-ui/icons/Cancel";
+import RestoreIcon from "@material-ui/icons/Restore";
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import '../stylesheets/log.css';
 
 // Determine which type of log will be rendered
-const checkTypeAndRender = (log) => {
-  if (log.category === "task") {
-    return <div>• {log.title}</div>;
-  } else if (log.category === "note") {
-    return <div>- {log.title}</div>;
-  } else {
-    return <div>o {log.title}</div>;
-  }
-};
+// const checkTypeAndRender = (log) => {
+//   if (log.category === "task") {
+//     return <span>• {log.title} </span>;
+//   } else if (log.category === "note") {
+//     return <span>- {log.title} </span>;
+//   } else if (log.category === "event") {
+//     return <span>◦ {log.title} </span>;
+//   } 
+// };
+
 
 class Log extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    this.checkTypeAndRender = this.checkTypeAndRender.bind(this);
+    this.handleDeleteLog = this.handleDeleteLog.bind(this);
   }
 
   handleChange() {
@@ -23,14 +29,50 @@ class Log extends React.Component {
     this.props.onRelevantChange(this.props.index);
   }
 
+  handleDeleteLog() {
+    this.props.onDelete(this.props.log)
+  }
+
+  checkTypeAndRender = (log) => {
+    if (log.category === "task") {
+      return (
+        <div>
+        <span onClick={this.handleChange}> • {log.title}  </span>
+        <DeleteForeverIcon onClick={this.handleDeleteLog}></DeleteForeverIcon>
+        </div>
+      );
+    } else if (log.category === "note") {
+      return (
+        <div>
+        <span onClick={this.handleChange}> - {log.title}  </span>
+        <DeleteForeverIcon onClick={this.handleDeleteLog}></DeleteForeverIcon>
+        </div>
+      );
+    } else if (log.category === "event") {
+      return (
+        <div>
+        <span onClick={this.handleChange}> ◦ {log.title}  </span>
+        <DeleteForeverIcon onClick={this.handleDeleteLog}></DeleteForeverIcon>
+        </div>
+      );
+    }
+  }
+
+
+
   render() {
     return (
       <div>
-        {checkTypeAndRender(this.props.log)}
         {this.props.log.isRelevant ? (
-          <Button onClick={this.handleChange}>Mark as irrelevant</Button>
+          <div id="relevant">
+            {this.checkTypeAndRender(this.props.log)}
+          
+          </div>
         ) : (
-          <Button onClick={this.handleChange}>Mark as relevant</Button>
+          <div id="irrelevant"> 
+            {this.checkTypeAndRender(this.props.log)}
+
+          </div>
         )}
       </div>
     );
